@@ -7,7 +7,7 @@ export declare class NowboardIconService {
     };
     setColorRules: BehaviorSubject<INowboardIconConfig | null>;
     DefaultColor: INowboardIconConfig | undefined;
-    constructor(config?: INowboardIconConfig);
+    constructor(config: INowboardIconConfig);
     getFromRegistry(key: string): string;
     addRegistry(key: string, path: string): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<NowboardIconService, never>;

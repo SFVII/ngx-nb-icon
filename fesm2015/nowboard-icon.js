@@ -437,7 +437,6 @@ class NowboardIconService {
         });
     }
     getFromRegistry(key) {
-        console.log(this.registry[key]);
         return this.registry[key];
     }
     addRegistry(key, path) {

@@ -460,7 +460,6 @@
             });
         }
         NowboardIconService.prototype.getFromRegistry = function (key) {
-            console.log(this.registry[key]);
             return this.registry[key];
         };
         NowboardIconService.prototype.addRegistry = function (key, path) {
