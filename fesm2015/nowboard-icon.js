@@ -935,10 +935,10 @@ class NowboardIconComponent {
     }
     ngOnInit() {
         this.style = [
-            `width: (${this.default_size * this.size}) px`,
-            `height: (${this.default_size * this.size}) px`,
+            `width: ${this.default_size * this.size}px`,
+            `height: ${this.default_size * this.size}px`,
             `filter: ${this.filter()}`,
-            `transform: scale(${this.size})`
+            `transform: scale(${this.size * 0.9})`
         ].join(';');
         this.spanStyleWrapper = {
             width: (this.default_size * this.size) + 'px',
@@ -961,7 +961,7 @@ NowboardIconComponent.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "12.0.0", 
     <span class="nb-icon {{icon}}-x{{size}}" [style]="spanStyleWrapper">
       <img [src]="src" style="{{style}}">
     </span>
-  `, isInline: true, styles: ["span {display: flex; align-items: center; justify-content: center;}"] });
+  `, isInline: true, styles: ["span {display: inline-flex; align-items: center; justify-content: center;}"] });
 i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.16", ngImport: i0, type: NowboardIconComponent, decorators: [{
             type: Component,
             args: [{
@@ -971,7 +971,7 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.16", ngImpo
       <img [src]="src" style="{{style}}">
     </span>
   `,
-                    styles: ['span {display: flex; align-items: center; justify-content: center;}']
+                    styles: ['span {display: inline-flex; align-items: center; justify-content: center;}']
                 }]
         }], ctorParameters: function () { return [{ type: NowboardIconService }]; }, propDecorators: { size: [{
                 type: Input
