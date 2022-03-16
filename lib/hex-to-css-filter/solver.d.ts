@@ -54,23 +54,7 @@ declare class Solver {
      */
     private fixValueByFilterIDX;
     private spsa;
-    /**
-     * Checks how much is the loss for the filter in RGB and HSL colors
-     *
-     * @private
-     * @param {SPSAPayload['values']} filters
-     * @returns {number}
-     * @memberof Solver
-     */
     private loss;
-    /**
-     * Returns the CSS filter list for the received HEX color
-     *
-     * @private
-     * @param {number[]} filters
-     * @returns {string}
-     * @memberof Solver
-     */
     private css;
 }
 export { Solver };

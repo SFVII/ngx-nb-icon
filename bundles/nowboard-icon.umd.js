@@ -1167,19 +1167,8 @@
             }
             return { values: best, loss: bestLoss, called: called };
         };
-        /**
-         * Checks how much is the loss for the filter in RGB and HSL colors
-         *
-         * @private
-         * @param {SPSAPayload['values']} filters
-         * @returns {number}
-         * @memberof Solver
-         */
         Solver.prototype.loss = function (filters) {
-            // Argument as an Array of percentages.
             var color = this.reusedColor;
-            // Resetting the color to black in case
-            // it was called more than once
             color.set(0, 0, 0);
             color.invert(filters[0] / 100);
             color.sepia(filters[1] / 100);
@@ -1195,14 +1184,6 @@
                 Math.abs(colorHSL.s - this.targetHSL.s) +
                 Math.abs(colorHSL.l - this.targetHSL.l));
         };
-        /**
-         * Returns the CSS filter list for the received HEX color
-         *
-         * @private
-         * @param {number[]} filters
-         * @returns {string}
-         * @memberof Solver
-         */
         Solver.prototype.css = function (filters) {
             var formatCssFilterValueByMultiplier = function (idx, multiplier) {
                 if (multiplier === void 0) { multiplier = 1; }
@@ -1316,6 +1297,9 @@
             this.setColor();
             this.src = this.service.getFromRegistry(this.icon);
         };
+        NowboardIconComponent.prototype.ngOnChanges = function (changes) {
+            this.ngOnInit();
+        };
         NowboardIconComponent.prototype.setColor = function () {
             var _a, _b;
             if (!this.disabled) {
@@ -1345,15 +1329,12 @@
                 "width: " + this.default_size * this.size + "px",
                 "height: " + this.default_size * this.size + "px",
                 "filter: " + this.filter(),
-                "transform: scale(" + this.size * 0.9 + ")"
+                "transform: scale(0.9)"
             ].join(';');
             this.spanStyleWrapper = {
                 width: (this.default_size * this.size) + 'px',
                 height: (this.default_size * this.size) + 'px',
             };
-        };
-        NowboardIconComponent.prototype.ngOnChanges = function (changes) {
-            this.ngOnInit();
         };
         NowboardIconComponent.prototype.filter = function () {
             var _a;

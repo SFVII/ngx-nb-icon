@@ -812,19 +812,8 @@ class Solver {
         }
         return { values: best, loss: bestLoss, called };
     }
-    /**
-     * Checks how much is the loss for the filter in RGB and HSL colors
-     *
-     * @private
-     * @param {SPSAPayload['values']} filters
-     * @returns {number}
-     * @memberof Solver
-     */
     loss(filters) {
-        // Argument as an Array of percentages.
         const color = this.reusedColor;
-        // Resetting the color to black in case
-        // it was called more than once
         color.set(0, 0, 0);
         color.invert(filters[0] / 100);
         color.sepia(filters[1] / 100);
@@ -840,14 +829,6 @@ class Solver {
             Math.abs(colorHSL.s - this.targetHSL.s) +
             Math.abs(colorHSL.l - this.targetHSL.l));
     }
-    /**
-     * Returns the CSS filter list for the received HEX color
-     *
-     * @private
-     * @param {number[]} filters
-     * @returns {string}
-     * @memberof Solver
-     */
     css(filters) {
         const formatCssFilterValueByMultiplier = (idx, multiplier = 1) => Math.round(filters[idx] * multiplier);
         return [
@@ -954,6 +935,9 @@ class NowboardIconComponent {
         this.setColor();
         this.src = this.service.getFromRegistry(this.icon);
     }
+    ngOnChanges(changes) {
+        this.ngOnInit();
+    }
     setColor() {
         var _a, _b;
         if (!this.disabled) {
@@ -983,15 +967,12 @@ class NowboardIconComponent {
             `width: ${this.default_size * this.size}px`,
             `height: ${this.default_size * this.size}px`,
             `filter: ${this.filter()}`,
-            `transform: scale(${this.size * 0.9})`
+            `transform: scale(0.9)`
         ].join(';');
         this.spanStyleWrapper = {
             width: (this.default_size * this.size) + 'px',
             height: (this.default_size * this.size) + 'px',
         };
-    }
-    ngOnChanges(changes) {
-        this.ngOnInit();
     }
     filter() {
         var _a;
