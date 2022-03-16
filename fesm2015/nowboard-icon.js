@@ -943,8 +943,18 @@ class NowboardIconComponent {
         this.spanStyleWrapper = {};
         this.src = '';
         this.default_size = 12;
+        this.service.setColorRules.subscribe((color) => {
+            if (color) {
+                console.log('color changed', color);
+                this.setColor();
+            }
+        });
     }
     ngOnInit() {
+        this.setColor();
+        this.src = this.service.getFromRegistry(this.icon);
+    }
+    setColor() {
         var _a, _b;
         if (!this.disabled) {
             if (!this.primary && ((_a = this.service.DefaultColor) === null || _a === void 0 ? void 0 : _a.primary)) {
@@ -979,7 +989,6 @@ class NowboardIconComponent {
             width: (this.default_size * this.size) + 'px',
             height: (this.default_size * this.size) + 'px',
         };
-        this.src = this.service.getFromRegistry(this.icon);
     }
     ngOnChanges(changes) {
         this.ngOnInit();

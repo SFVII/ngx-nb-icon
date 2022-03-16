@@ -15,6 +15,7 @@ export declare class NowboardIconComponent implements OnInit, OnChanges {
     private color;
     constructor(service: NowboardIconService);
     ngOnInit(): void;
+    private setColor;
     ngOnChanges(changes: SimpleChanges): void;
     private filter;
     static ɵfac: i0.ɵɵFactoryDeclaration<NowboardIconComponent, never>;
