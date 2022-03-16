@@ -1,5 +1,6 @@
 import * as i0 from '@angular/core';
-import { Injectable, Component, Input, NgModule } from '@angular/core';
+import { Injectable, Inject, Component, Input, NgModule, Optional, SkipSelf } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 const IconRegistry = {
     "activity_1": "/assets/nowboard-icon/activity_1.svg",
@@ -424,8 +425,16 @@ const IconRegistry = {
 };
 
 class NowboardIconService {
-    constructor() {
+    constructor(config) {
         this.registry = IconRegistry;
+        this.setColorRules = new BehaviorSubject(null);
+        if (config)
+            this.DefaultColor = config;
+        this.setColorRules.subscribe((colors) => {
+            if (colors) {
+                this.DefaultColor = colors;
+            }
+        });
     }
     getFromRegistry(key) {
         console.log(this.registry[key]);
@@ -435,14 +444,17 @@ class NowboardIconService {
         this.registry[key] = path;
     }
 }
-NowboardIconService.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.16", ngImport: i0, type: NowboardIconService, deps: [], target: i0.ɵɵFactoryTarget.Injectable });
+NowboardIconService.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.16", ngImport: i0, type: NowboardIconService, deps: [{ token: '__NowboardIcon__' }], target: i0.ɵɵFactoryTarget.Injectable });
 NowboardIconService.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "12.2.16", ngImport: i0, type: NowboardIconService, providedIn: 'root' });
 i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.16", ngImport: i0, type: NowboardIconService, decorators: [{
             type: Injectable,
             args: [{
                     providedIn: 'root'
                 }]
-        }], ctorParameters: function () { return []; } });
+        }], ctorParameters: function () { return [{ type: undefined, decorators: [{
+                    type: Inject,
+                    args: ['__NowboardIcon__']
+                }] }]; } });
 
 class Color {
     constructor(r, g, b) {
@@ -926,7 +938,7 @@ class NowboardIconComponent {
     constructor(service) {
         this.service = service;
         this.size = 1;
-        this.color = 'white';
+        this.disabled = false;
         this.icon = '';
         this.style = '';
         this.spanStyleWrapper = {};
@@ -934,6 +946,30 @@ class NowboardIconComponent {
         this.default_size = 12;
     }
     ngOnInit() {
+        var _a, _b;
+        if (!this.disabled) {
+            if (!this.primary && ((_a = this.service.DefaultColor) === null || _a === void 0 ? void 0 : _a.primary)) {
+                this.color = this.service.DefaultColor.primary;
+            }
+            else if (this.primary) {
+                // @ts-ignore
+                this.color = this.primary;
+            }
+            else {
+                this.color = '#000000';
+            }
+        }
+        else {
+            if (!this.disabled_color && ((_b = this.service.DefaultColor) === null || _b === void 0 ? void 0 : _b.disabled_color)) {
+                this.color = this.service.DefaultColor.disabled_color;
+            }
+            else if (this.disabled_color) {
+                this.color = this.disabled_color;
+            }
+            else {
+                this.color = '#000000';
+            }
+        }
         this.style = [
             `width: ${this.default_size * this.size}px`,
             `height: ${this.default_size * this.size}px`,
@@ -946,6 +982,9 @@ class NowboardIconComponent {
         };
         this.src = this.service.getFromRegistry(this.icon);
     }
+    ngOnChanges(changes) {
+        this.ngOnInit();
+    }
     filter() {
         var _a;
         const config = {
@@ -957,7 +996,7 @@ class NowboardIconComponent {
     }
 }
 NowboardIconComponent.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.16", ngImport: i0, type: NowboardIconComponent, deps: [{ token: NowboardIconService }], target: i0.ɵɵFactoryTarget.Component });
-NowboardIconComponent.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "12.0.0", version: "12.2.16", type: NowboardIconComponent, selector: "nb-icon", inputs: { size: "size", color: "color", icon: "icon" }, ngImport: i0, template: `
+NowboardIconComponent.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "12.0.0", version: "12.2.16", type: NowboardIconComponent, selector: "nb-icon", inputs: { size: "size", primary: "primary", disabled_color: "disabled_color", disabled: "disabled", icon: "icon" }, usesOnChanges: true, ngImport: i0, template: `
     <span class="nb-icon {{icon}}-x{{size}}" [style]="spanStyleWrapper">
       <img [src]="src" style="{{style}}">
     </span>
@@ -975,17 +1014,37 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.16", ngImpo
                 }]
         }], ctorParameters: function () { return [{ type: NowboardIconService }]; }, propDecorators: { size: [{
                 type: Input
-            }], color: [{
+            }], primary: [{
+                type: Input
+            }], disabled_color: [{
+                type: Input
+            }], disabled: [{
                 type: Input
             }], icon: [{
                 type: Input
             }] } });
 
 class NowboardIconModule {
+    constructor(parentModule) {
+        if (parentModule) {
+            throw new Error('NowboardIconModule is already loaded. Import it in the AppModule only');
+        }
+    }
+    static forRoot(config) {
+        return {
+            ngModule: NowboardIconModule,
+            providers: [
+                { provide: '__NowboardIcon__', useValue: config },
+                NowboardIconService
+            ]
+        };
+    }
 }
-NowboardIconModule.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.16", ngImport: i0, type: NowboardIconModule, deps: [], target: i0.ɵɵFactoryTarget.NgModule });
+NowboardIconModule.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.16", ngImport: i0, type: NowboardIconModule, deps: [{ token: NowboardIconModule, optional: true, skipSelf: true }], target: i0.ɵɵFactoryTarget.NgModule });
 NowboardIconModule.ɵmod = i0.ɵɵngDeclareNgModule({ minVersion: "12.0.0", version: "12.2.16", ngImport: i0, type: NowboardIconModule, declarations: [NowboardIconComponent], exports: [NowboardIconComponent] });
-NowboardIconModule.ɵinj = i0.ɵɵngDeclareInjector({ minVersion: "12.0.0", version: "12.2.16", ngImport: i0, type: NowboardIconModule, imports: [[]] });
+NowboardIconModule.ɵinj = i0.ɵɵngDeclareInjector({ minVersion: "12.0.0", version: "12.2.16", ngImport: i0, type: NowboardIconModule, providers: [
+        NowboardIconService
+    ], imports: [[]] });
 i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.16", ngImport: i0, type: NowboardIconModule, decorators: [{
             type: NgModule,
             args: [{
@@ -995,9 +1054,16 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.16", ngImpo
                     imports: [],
                     exports: [
                         NowboardIconComponent
+                    ],
+                    providers: [
+                        NowboardIconService
                     ]
                 }]
-        }] });
+        }], ctorParameters: function () { return [{ type: NowboardIconModule, decorators: [{
+                    type: Optional
+                }, {
+                    type: SkipSelf
+                }] }]; } });
 
 /*
  * Public API Surface of nowboard-icon

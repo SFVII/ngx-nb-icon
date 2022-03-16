@@ -1,8 +1,8 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core')) :
-    typeof define === 'function' && define.amd ? define('nowboard-icon', ['exports', '@angular/core'], factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["nowboard-icon"] = {}, global.ng.core));
-})(this, (function (exports, i0) { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('rxjs')) :
+    typeof define === 'function' && define.amd ? define('nowboard-icon', ['exports', '@angular/core', 'rxjs'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["nowboard-icon"] = {}, global.ng.core, global.rxjs));
+})(this, (function (exports, i0, rxjs) { 'use strict';
 
     function _interopNamespace(e) {
         if (e && e.__esModule) return e;
@@ -447,8 +447,17 @@
     };
 
     var NowboardIconService = /** @class */ (function () {
-        function NowboardIconService() {
+        function NowboardIconService(config) {
+            var _this = this;
             this.registry = IconRegistry;
+            this.setColorRules = new rxjs.BehaviorSubject(null);
+            if (config)
+                this.DefaultColor = config;
+            this.setColorRules.subscribe(function (colors) {
+                if (colors) {
+                    _this.DefaultColor = colors;
+                }
+            });
         }
         NowboardIconService.prototype.getFromRegistry = function (key) {
             console.log(this.registry[key]);
@@ -459,14 +468,19 @@
         };
         return NowboardIconService;
     }());
-    NowboardIconService.ɵfac = i0__namespace.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.16", ngImport: i0__namespace, type: NowboardIconService, deps: [], target: i0__namespace.ɵɵFactoryTarget.Injectable });
+    NowboardIconService.ɵfac = i0__namespace.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.16", ngImport: i0__namespace, type: NowboardIconService, deps: [{ token: '__NowboardIcon__' }], target: i0__namespace.ɵɵFactoryTarget.Injectable });
     NowboardIconService.ɵprov = i0__namespace.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "12.2.16", ngImport: i0__namespace, type: NowboardIconService, providedIn: 'root' });
     i0__namespace.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.16", ngImport: i0__namespace, type: NowboardIconService, decorators: [{
                 type: i0.Injectable,
                 args: [{
                         providedIn: 'root'
                     }]
-            }], ctorParameters: function () { return []; } });
+            }], ctorParameters: function () {
+            return [{ type: undefined, decorators: [{
+                            type: i0.Inject,
+                            args: ['__NowboardIcon__']
+                        }] }];
+        } });
 
     /*! *****************************************************************************
     Copyright (c) Microsoft Corporation.
@@ -1285,7 +1299,7 @@
         function NowboardIconComponent(service) {
             this.service = service;
             this.size = 1;
-            this.color = 'white';
+            this.disabled = false;
             this.icon = '';
             this.style = '';
             this.spanStyleWrapper = {};
@@ -1293,6 +1307,30 @@
             this.default_size = 12;
         }
         NowboardIconComponent.prototype.ngOnInit = function () {
+            var _a, _b;
+            if (!this.disabled) {
+                if (!this.primary && ((_a = this.service.DefaultColor) === null || _a === void 0 ? void 0 : _a.primary)) {
+                    this.color = this.service.DefaultColor.primary;
+                }
+                else if (this.primary) {
+                    // @ts-ignore
+                    this.color = this.primary;
+                }
+                else {
+                    this.color = '#000000';
+                }
+            }
+            else {
+                if (!this.disabled_color && ((_b = this.service.DefaultColor) === null || _b === void 0 ? void 0 : _b.disabled_color)) {
+                    this.color = this.service.DefaultColor.disabled_color;
+                }
+                else if (this.disabled_color) {
+                    this.color = this.disabled_color;
+                }
+                else {
+                    this.color = '#000000';
+                }
+            }
             this.style = [
                 "width: " + this.default_size * this.size + "px",
                 "height: " + this.default_size * this.size + "px",
@@ -1304,6 +1342,9 @@
                 height: (this.default_size * this.size) + 'px',
             };
             this.src = this.service.getFromRegistry(this.icon);
+        };
+        NowboardIconComponent.prototype.ngOnChanges = function (changes) {
+            this.ngOnInit();
         };
         NowboardIconComponent.prototype.filter = function () {
             var _a;
@@ -1317,7 +1358,7 @@
         return NowboardIconComponent;
     }());
     NowboardIconComponent.ɵfac = i0__namespace.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.16", ngImport: i0__namespace, type: NowboardIconComponent, deps: [{ token: NowboardIconService }], target: i0__namespace.ɵɵFactoryTarget.Component });
-    NowboardIconComponent.ɵcmp = i0__namespace.ɵɵngDeclareComponent({ minVersion: "12.0.0", version: "12.2.16", type: NowboardIconComponent, selector: "nb-icon", inputs: { size: "size", color: "color", icon: "icon" }, ngImport: i0__namespace, template: "\n    <span class=\"nb-icon {{icon}}-x{{size}}\" [style]=\"spanStyleWrapper\">\n      <img [src]=\"src\" style=\"{{style}}\">\n    </span>\n  ", isInline: true, styles: ["span {display: inline-flex; align-items: center; justify-content: center;}"] });
+    NowboardIconComponent.ɵcmp = i0__namespace.ɵɵngDeclareComponent({ minVersion: "12.0.0", version: "12.2.16", type: NowboardIconComponent, selector: "nb-icon", inputs: { size: "size", primary: "primary", disabled_color: "disabled_color", disabled: "disabled", icon: "icon" }, usesOnChanges: true, ngImport: i0__namespace, template: "\n    <span class=\"nb-icon {{icon}}-x{{size}}\" [style]=\"spanStyleWrapper\">\n      <img [src]=\"src\" style=\"{{style}}\">\n    </span>\n  ", isInline: true, styles: ["span {display: inline-flex; align-items: center; justify-content: center;}"] });
     i0__namespace.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.16", ngImport: i0__namespace, type: NowboardIconComponent, decorators: [{
                 type: i0.Component,
                 args: [{
@@ -1327,20 +1368,38 @@
                     }]
             }], ctorParameters: function () { return [{ type: NowboardIconService }]; }, propDecorators: { size: [{
                     type: i0.Input
-                }], color: [{
+                }], primary: [{
+                    type: i0.Input
+                }], disabled_color: [{
+                    type: i0.Input
+                }], disabled: [{
                     type: i0.Input
                 }], icon: [{
                     type: i0.Input
                 }] } });
 
     var NowboardIconModule = /** @class */ (function () {
-        function NowboardIconModule() {
+        function NowboardIconModule(parentModule) {
+            if (parentModule) {
+                throw new Error('NowboardIconModule is already loaded. Import it in the AppModule only');
+            }
         }
+        NowboardIconModule.forRoot = function (config) {
+            return {
+                ngModule: NowboardIconModule,
+                providers: [
+                    { provide: '__NowboardIcon__', useValue: config },
+                    NowboardIconService
+                ]
+            };
+        };
         return NowboardIconModule;
     }());
-    NowboardIconModule.ɵfac = i0__namespace.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.16", ngImport: i0__namespace, type: NowboardIconModule, deps: [], target: i0__namespace.ɵɵFactoryTarget.NgModule });
+    NowboardIconModule.ɵfac = i0__namespace.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "12.2.16", ngImport: i0__namespace, type: NowboardIconModule, deps: [{ token: NowboardIconModule, optional: true, skipSelf: true }], target: i0__namespace.ɵɵFactoryTarget.NgModule });
     NowboardIconModule.ɵmod = i0__namespace.ɵɵngDeclareNgModule({ minVersion: "12.0.0", version: "12.2.16", ngImport: i0__namespace, type: NowboardIconModule, declarations: [NowboardIconComponent], exports: [NowboardIconComponent] });
-    NowboardIconModule.ɵinj = i0__namespace.ɵɵngDeclareInjector({ minVersion: "12.0.0", version: "12.2.16", ngImport: i0__namespace, type: NowboardIconModule, imports: [[]] });
+    NowboardIconModule.ɵinj = i0__namespace.ɵɵngDeclareInjector({ minVersion: "12.0.0", version: "12.2.16", ngImport: i0__namespace, type: NowboardIconModule, providers: [
+            NowboardIconService
+        ], imports: [[]] });
     i0__namespace.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "12.2.16", ngImport: i0__namespace, type: NowboardIconModule, decorators: [{
                 type: i0.NgModule,
                 args: [{
@@ -1350,9 +1409,18 @@
                         imports: [],
                         exports: [
                             NowboardIconComponent
+                        ],
+                        providers: [
+                            NowboardIconService
                         ]
                     }]
-            }] });
+            }], ctorParameters: function () {
+            return [{ type: NowboardIconModule, decorators: [{
+                            type: i0.Optional
+                        }, {
+                            type: i0.SkipSelf
+                        }] }];
+        } });
 
     /*
      * Public API Surface of nowboard-icon
