@@ -926,7 +926,6 @@ class NowboardIconComponent {
         this.default_size = 12;
         this.service.setColorRules.subscribe((color) => {
             if (color) {
-                console.log('color changed', color);
                 this.setColor();
             }
         });

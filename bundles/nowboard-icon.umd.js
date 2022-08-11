@@ -1288,7 +1288,6 @@
             this.default_size = 12;
             this.service.setColorRules.subscribe(function (color) {
                 if (color) {
-                    console.log('color changed', color);
                     _this.setColor();
                 }
             });
